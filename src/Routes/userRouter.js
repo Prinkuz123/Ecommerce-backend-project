@@ -9,5 +9,8 @@ route.post("/users/login",user.userLogin)
 route.get('/users/products',product.getallProduct)
 route.get('/users/products/:id',product.getproductByid)
 route.get('/users/products/category/:category',product.getprdctBycategory)
-
+route.post('/users/cart/:id',user.AddproductTocart)
+route.get('/users/cart/:id',user.gettingProductfromCart)
+route.post('/users/wishlist/:id',user.addproductTowishlist)
+route.get('/users/wishlist/:id',user.getallproductsFromwishlist)
 module.exports=route
