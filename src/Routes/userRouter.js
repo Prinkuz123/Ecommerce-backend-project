@@ -13,4 +13,6 @@ route.post('/users/cart/:id',user.AddproductTocart)
 route.get('/users/cart/:id',user.gettingProductfromCart)
 route.post('/users/wishlist/:id',user.addproductTowishlist)
 route.get('/users/wishlist/:id',user.getallproductsFromwishlist)
+route.delete('/users/wishlist/:id',user.deletefromWishlist)
+
 module.exports=route

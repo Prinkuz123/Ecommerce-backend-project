@@ -126,33 +126,32 @@ catch(er){
 }
 
 //  -------------deleting product from the wishlist--------------
-// const deletefromWishlist=async(req,res)=>{
-//     const id=req.params.id
-//     const user=req.body.username
+const deletefromWishlist=async(req,res)=>{
+    const id=req.params.id
+    const user=req.body.username
 
-//     try{
-//         const User=await userSchema.findOne({username:user})
-//         if(!User){
-//             res.send("User not found ")
-//         }
-//         const productIndex=User.wishlist.indexOf(id)
-//         if(productIndex==-1){
-//             res.send("no product found in wishlist")
-//         }
-//         else
-//         {
-//             User.wishlist.splice(productIndex,1)
-//             User.wishlist.save()
-//             res.send("product removed from the cart ")
-//         }
+    try{
+        const User=await userSchema.findOne({username:user})
+        if(!User){
+            res.send("User not found please register")
+        }
+        const productIndex=User.wishlist.indexOf(id)
+        if(productIndex===-1){
+            return res.status(404).json("no product found in wishlist")
+        }
+        
+            User.wishlist.splice(productIndex,1)
+            await User.save()
+            res.send("product removed from the wishlist ")
+        
 
 
-//     }
-//     catch(er){
-//         console.log("error",er)
-//     }
+    }
+    catch(er){
+        console.log("error",er)
+    }
    
-// }
+}
 
 module.exports = {
   userRegister,
@@ -160,5 +159,6 @@ module.exports = {
   AddproductTocart,
   gettingProductfromCart,
   addproductTowishlist,
-  getallproductsFromwishlist
+  getallproductsFromwishlist,
+  deletefromWishlist
 };
