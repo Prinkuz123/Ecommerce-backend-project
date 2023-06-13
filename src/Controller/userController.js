@@ -1,43 +1,67 @@
 const userSchema = require("../Model/Userschema");
 const productData = require("../Model/Productschema");
+const jwt=require("jsonwebtoken")
 const productschema = require("../Model/Productschema");
+const bcrypt=require('bcrypt')
 
-//uesrregister
+
+
+//-------------ueser register---------------
+
+
+
+
 const userRegister = async (req, res) => {
   try {
-    let Username = req.body.username;
+    
+    const userName = req.body.username;
+    const Password=req.body.password;
 
-    const User = await userSchema.findOne({ username: Username });
 
-    if (User) {
-      res.send("this user already exist");
+
+    const user = await userSchema.findOne({ username: userName });
+
+    if (user) {
+      return res.send("This user already exists");
     }
 
-    const newUser = new userSchema(req.body);
+    // Hashing password
+    let hashedPassword= await bcrypt.hash(Password, 10)
+
+    const newUser = new userSchema({ username: userName, password: hashedPassword });
     await newUser.save();
 
-    res.send("USer registered successfully,please login to continue");
-  } catch (er) {
-    console.log("error", er);
+    res.send("User registered successfully, please login to continue");
+  } catch (err) {
+    console.log("Error:", err);
+    // Handle the error appropriately
   }
 };
 
-// user login
+
+//---------------- user login-----------------
 const userLogin = async (req, res) => {
   try {
-    let Username = req.body.username;
-    const Password = req.body.password;
-    const User = await userSchema.findOne({ username: Username });
+    let userName = req.body.username;
+    const passWord = req.body.password;
+    const User = await userSchema.findOne({ username: userName});
     if (!User) {
-      res.send("User not found");
-    } else {
-      if (Password == User.password) {
-        res.send("user login successful");
-      } else {
-        res.send("password mismatch");
-      }
-    }
-  } catch (er) {
+     return res.status(404).send({ auth:false, message:"invalid password or username"});
+    } 
+    
+    //hashing password    
+   let Password=await bcrypt.hash(passWord,10)
+
+    bcrypt.compare (Password,User.password,(err)=>{
+if(err){
+  res.status(401).json({ auth:false,message:"Invalid password"})
+
+}
+      }) 
+      const token= jwt.sign({username:userName},'user',{expiresIn:'24h'})
+res.json({ auth:true,message:"user logined successfully",token})     
+    
+     } catch (er) {
     console.log("Error", er);
   }
 };
