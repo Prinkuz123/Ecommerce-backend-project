@@ -1,16 +1,19 @@
-const AdminSchema = require("../Controller/adminController");
 const User = require("../Model/Userschema");
+const jwt = require("jsonwebtoken");
 
-//admin login
+//----------admin login------------
 const adminLogin = async (req, res) => {
   try {
-    const adminUsername = process.env.ADMIN_USERNAME;
-    const adminPassword = process.env.ADMIN_PASSWORD;
+    const adminUsername = process.env.ADMINUSERNAME;
+    const adminPassword = process.env.ADMINPASSWORD;
 
     const ADMINUSERNAME = req.body.username;
     const ADMINPASSWORD = req.body.password;
     if (adminUsername == ADMINUSERNAME && adminPassword == ADMINPASSWORD) {
-      res.send("admin logged in");
+      const token = jwt.sign({ username: ADMINUSERNAME }, "admin", {
+        expiresIn: "24h",
+      });
+      res.json({ auth: true, message: "admin logined ", token });
     } else {
       res.send("password or username mismatch");
     }
@@ -40,4 +43,4 @@ const getusersByid = async (req, res) => {
   }
 };
 
-module.exports = { adminLogin, getallUsers ,getusersByid};
+module.exports = { adminLogin, getallUsers, getusersByid };
