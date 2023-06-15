@@ -15,7 +15,7 @@ try {
   console.log("error", err);
 }
 
-app.use(express.json());
+app.use(express.json()); //x
 
 //requiring user router
 const userRouter = require("./src/Routes/userRouter");
