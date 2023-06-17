@@ -2,27 +2,32 @@ const userSchema = require("../Model/Userschema");
 const productData = require("../Model/Productschema");
 const jwt = require("jsonwebtoken");
 const productschema = require("../Model/Productschema");
-
+const validateSchema=require("../Helper/Schemavalidation")
 const bcrypt = require("bcrypt");
 
 //-------------ueser register---------------
 
 const userRegister = async (req, res) => {
   
-    const userName = req.body.username;
-    const Password = req.body.password;
+  
+    //validating the reqbody
+    const{error,value}=validateSchema.usrSchema.validate(req.body)
+    if(error){
+  return res.status(400).json({message:error.details[0].message})
+    }
+const{username,password}=value
 
-    const user = await userSchema.findOne({ username: userName });
+    const user = await userSchema.findOne({ username: username });
 
     if (user) {
-      return res.json("This user already exists");
+      return res.status(401).json("This user already exists");
     }
 
     //Hashing password-----
-    let hashedPassword = await bcrypt.hash(Password, 10);
+    let hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new userSchema({
-      username: userName,
+      username: username,
       password: hashedPassword,
     });
     await newUser.save();
@@ -37,9 +42,9 @@ const userRegister = async (req, res) => {
 //---------------- user login-----------------
 const userLogin = async (req, res) => {
  
-    let userName = req.body.username;
+    let username = req.body.username;
     const passWord = req.body.password;
-    const User = await userSchema.findOne({ username: userName });
+    const User = await userSchema.findOne({ username: username });
     if (!User) {
       return res
         .status(404)
@@ -55,7 +60,7 @@ const userLogin = async (req, res) => {
           .json({status:"failure", message: "Invalid password" });
       }
     });
-    const token = jwt.sign({ username: userName }, "user", {
+    const token = jwt.sign({ username: username }, "user", {
       expiresIn: "24h",
     });
     res.json({ status:"success", 

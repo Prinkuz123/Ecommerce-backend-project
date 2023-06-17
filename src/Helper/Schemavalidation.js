@@ -8,4 +8,4 @@ const usrSchema=Joi.object({
     password:Joi.string().min(6).required()
 })
 
-module.exports={admnSchema,usrSchema}
+module.exports={usrSchema}

@@ -1,3 +1,4 @@
+const admin=require('../Model/Adminschema')
 const User = require("../Model/Userschema");
 const jwt = require("jsonwebtoken");
 
